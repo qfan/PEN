@@ -1,0 +1,58 @@
+20x20
+
+You need to go right 20 steps in total, and 20 steps down in total.
+
+This is equivalent to a 40-bit binary string which must have 20 ones, and 20 zeros.
+
+
+OK, so that's all I can remember from MACM.
+
+Let me get the book.
+
+Wait, no, you are actually choosing 20 cards (positions) from 40 unique cards(positions). And the remaining 20 positions are assigned by symmetry (1 or 0).
+
+The formular is... C(n, k) where n=40, k=20
+  C(n, k)
+= n! / (k! (n-k)!)
+= 40! / (20! (40-20)!)
+
+Now the problem is, 64bit unsigned int has a max value of
+18,446,744,073,709,551,615
+That's 20 digits, but
+40! has a rough lower bound of 30 digits, because each of 10 ~ 40 increases the value by at least 1 digit.
+
+I need something to do big integer calculation.
+
+Java has BigInteger class which provides arbitrary precision, and all arithmetic operations similar to primitive integer type.
+
+WolframAlpha.com can probably provide answer to 40!/(20!20!) immediately.
+
+
+Or I can manually simplify a little more.
+   40!/(20!20!)
+=  (40 * 39 * 38 * ... * 22 * 21) / (20!)
+
+40/20 = 2
+38/19 = 2
+36/18 = 2
+34/17 = 2
+32/16 = 2
+30/15 = 2
+28/14 = 2
+26/13 = 2
+24/12 = 2
+22/11 = 2
+
+so,
+= (39 * 37 * 35 * 33 * 31 * 29 * 27 * 25 * 23 * 21) * 2^10 / 
+   (10 * 9 * 8 * 7 * 6 * 5 * 4 * 3 * 2)
+= (39 * 37 * 35 * 33 * 31 * 29 * 27 * 25 * 23 * 21) * 2^10 / 
+   (10 * 27 * 2^3 * 35 * 3 * 2 * 2^2 * 2)
+= (39 * 37 * 35 * 33 * 31 * 29 * 27 * 25 * 23 * 21) * 2^10 / 
+   (10 * 27 * 35 * 3 * 2^7)
+= (39 * 37 * 33 * 31 * 29 * 25 * 23 * 7) * 2^3 / 
+   (10)
+= 39 * 37 * 33 * 31 * 29 * 25 * 23 * 7 * 8 / 10
+That's no more than 16 digits during calculation.
+
+Alternatively I can build my own BigInteger class... but not today.
